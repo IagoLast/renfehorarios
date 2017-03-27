@@ -1,0 +1,361 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <title></title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Horarios Renfe</title>
+  <script async src="dist/bundle.js"></script>
+  <style>
+    header {
+      font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+      border: none;
+      max-height: 38px;
+      margin-bottom: 1.5em;
+      padding: 1em 30px;
+      z-index: 3;
+      color: #fff;
+      box-shadow: 0 2px 2px 0 rgba(0, 0, 0, .14), 0 3px 1px -2px rgba(0, 0, 0, .2), 0 1px 5px 0 rgba(0, 0, 0, .12)
+    }
+
+    body {
+      margin: 0;
+      background-color: #fafafa;
+    }
+
+    main {
+      max-width: 900px;
+      display: block;
+      margin: auto;
+      padding: 30px
+    }
+
+    header,
+    input[type=button] {
+      background-color: #e91e63;
+      letter-spacing: .5px;
+      outline: 0;
+      text-transform: uppercase;
+      font-size: 1em;
+    }
+
+    input[type=text],
+    input[type=date] {
+      font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+      background-color: transparent;
+      border: none;
+      border-bottom: 1.5px solid #9e9e9e;
+      border-radius: 0;
+      outline: 0;
+      height: 3rem;
+      width: 100%;
+      font-size: 1.1em;
+      font-weight: 300;
+      margin: 0 0 20px;
+      padding: 0;
+      box-shadow: none;
+      box-sizing: content-box;
+      transition: all .3s
+    }
+
+    input[type=text]:focus,
+    input[type=date]:focus {
+      border-bottom: 1.5px solid #e91e63
+    }
+
+    input[type=button] {
+      width: 100%;
+      background-clip: padding-box;
+      border-radius: 2px;
+      border: none;
+      color: #FFF;
+      cursor: pointer;
+      margin-bottom: 1em;
+      margin-top: 1em;
+      padding: 1em 2rem;
+      text-align: center;
+      box-shadow: 0 2px 5px 0 rgba(0, 0, 0, .16), 0 2px 10px 0 rgba(0, 0, 0, .12)
+    }
+
+    input[type=button]:focus,
+    input[type=button]:hover {
+      background-color: #FF4081
+    }
+
+    label {
+      font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+      font-size: .9em;
+      color: #333;
+      font-weight: 300;
+    }
+
+    footer a {
+      text-align: center;
+      display: block;
+      text-decoration: none;
+      color: #3f51b5;
+      font-family: helvetica;
+      font-weight: 100;
+      font-size: 1.1em
+    }
+  </style>
+</head>
+
+<body>
+  <header>Horarios Renfe</header>
+  <main>
+    <label for="date">Fecha de salida</label>
+    <input id="date" placeholder="dd/mm/aaaa" type="text" name="date" value="">
+    <label for="from">Estación de origen</label>
+    <input id="from" type="text" placeholder="Origen" name="from" value="" list="stations">
+    <label for="to" />Estación de destino</label>
+    <input id="to" type="text" placeholder="Destino" name="to" value="" list="stations">
+    <input aria-label="Buscar Trenes" type="button" name="search" value="Buscar Trenes">
+    <svg class="spinner" width="65px" height="65px" viewbox="0 0 66 66" xmlns="http://www.w3.org/2000/svg" style="display: none;">
+      <circle class="path" fill="none" stroke-width="6" stroke-linecap="round" cx="33" cy="33" r="30"></circle>
+    </svg>
+    <table style="display:none;" class="timetable">
+      <thead>
+        <th>Tren</th>
+        <th>Salida</th>
+        <th>Llegada</th>
+        <th>Precio</th>
+      </thead>
+      <tbody>
+      </tbody>
+    </table>
+  </main>
+  <footer>
+    <a class="gh" href="https://github.com/IagoLast/renfehorarios">@IagoLast</a>
+  </footer>
+  <datalist id="stations">
+    <option value="A Coruña" data-id="31412"></option>
+    <option value="Albacete-Los Llanos" data-id="60600"></option>
+    <option value="Alcazar De San Juan" data-id="60400"></option>
+    <option value="Algeciras" data-id="55020"></option>
+    <option value="Alicante/Alacant" data-id="60911"></option>
+    <option value="Almansa" data-id="60800"></option>
+    <option value="Almeria" data-id="56312"></option>
+    <option value="Antequera (Todas)" data-id="ANTEQ"></option>
+    <option value="Antequera-Santa Ana" data-id="02003"></option>
+    <option value="Avila" data-id="10400"></option>
+    <option value="Balsicas-Mar Menor" data-id="61303"></option>
+    <option value="Barcelona (Todas)" data-id="BARCE"></option>
+    <option value="Barcelona-Estacio De França" data-id="79400"></option>
+    <option value="Barcelona-Sants" data-id="71801"></option>
+    <option value="Benicarlo-Peñiscola" data-id="65311"></option>
+    <option value="Bilbao (Todas)" data-id="BILBA"></option>
+    <option value="Bilbao-Abando Indalecio Prieto" data-id="13200"></option>
+    <option value="Burgos-Rosa De Lima" data-id="11014"></option>
+    <option value="Caceres" data-id="35400"></option>
+    <option value="Cadiz" data-id="51405"></option>
+    <option value="Calahorra" data-id="81108"></option>
+    <option value="Calatayud" data-id="70600"></option>
+    <option value="Camp Tarragona" data-id="04104"></option>
+    <option value="Cartagena" data-id="61307"></option>
+    <option value="Castello De La Plana/Castellon De La Pl." data-id="65300"></option>
+    <option value="Ciudad Real" data-id="37200"></option>
+    <option value="Cordoba" data-id="50500"></option>
+    <option value="Cuenca (Todas)" data-id="CUENC"></option>
+    <option value="Cuenca Fernando Zobel" data-id="03208"></option>
+    <option value="Elche Parque/Elx Parc" data-id="62103"></option>
+    <option value="Elda-Petrer" data-id="60905"></option>
+    <option value="Ferrol" data-id="21010"></option>
+    <option value="Figueres Vilafant" data-id="04307"></option>
+    <option value="Gijon" data-id="15410"></option>
+    <option value="Gijon (Todas)" data-id="GIJON"></option>
+    <option value="Girona" data-id="79300"></option>
+    <option value="Granada" data-id="05000"></option>
+    <option value="Guadalajara (Todas)" data-id="GUADA"></option>
+    <option value="Guadalajara - Yebes" data-id="04007"></option>
+    <option value="Huelva" data-id="43019"></option>
+    <option value="Huesca" data-id="74200"></option>
+    <option value="Irun" data-id="11600"></option>
+    <option value="Irun-Hendaya (Todas)" data-id="IRUN-"></option>
+    <option value="Jaen" data-id="03100"></option>
+    <option value="Jerez De La Frontera" data-id="51300"></option>
+    <option value="Koln Hbf" data-id="50500"></option>
+    <option value="L'Aldea-Amposta-Tortosa" data-id="65402"></option>
+    <option value="Lebrija" data-id="51203"></option>
+    <option value="Leon" data-id="15100"></option>
+    <option value="Linares-Baeza" data-id="50300"></option>
+    <option value="Lisboa (Todas)" data-id="LISBO"></option>
+    <option value="Lisboa-Estacion Oriente" data-id="94404"></option>
+    <option value="Lleida" data-id="78400"></option>
+    <option value="Logroño" data-id="81100"></option>
+    <option value="Madrid (Todas)" data-id="MADRI"></option>
+    <option value="Madrid - Atocha Cercanias" data-id="18000"></option>
+    <option value="Madrid-Barajas T4" data-id="98305"></option>
+    <option value="Madrid-Chamartin" data-id="17000"></option>
+    <option value="Madrid-Puerta De Atocha" data-id="60000"></option>
+    <option value="Malaga Maria Zambrano" data-id="54413"></option>
+    <option value="Manzanares" data-id="50100"></option>
+    <option value="Medina Del Campo (Todas)" data-id="MEDIN"></option>
+    <option value="Miranda De Ebro" data-id="11200"></option>
+    <option value="Monforte De Lemos" data-id="20300"></option>
+    <option value="Murcia" data-id="61200"></option>
+    <option value="Navalmoral De La Mata" data-id="35206"></option>
+    <option value="Osuna" data-id="01007"></option>
+    <option value="Ourense" data-id="22100"></option>
+    <option value="Oviedo" data-id="15211"></option>
+    <option value="Palencia" data-id="14100"></option>
+    <option value="Pamplona/Iruña" data-id="80100"></option>
+    <option value="Plasencia" data-id="30002"></option>
+    <option value="Ponferrada" data-id="20200"></option>
+    <option value="Pontevedra" data-id="23004"></option>
+    <option value="Puente Genil (Todas)" data-id="PTE G"></option>
+    <option value="Puente Genil-Herrera" data-id="02002"></option>
+    <option value="Puerto De Santa Maria" data-id="51400"></option>
+    <option value="Puertollano" data-id="37300"></option>
+    <option value="Redondela (Todas)" data-id="REDON"></option>
+    <option value="Ronda" data-id="55007"></option>
+    <option value="Sagunt/Sagunto" data-id="65200"></option>
+    <option value="Salamanca" data-id="30100"></option>
+    <option value="San Fernando-Bahia Sur" data-id="51406"></option>
+    <option value="San Roque-La Linea" data-id="55018"></option>
+    <option value="San Sebastian/Donostia" data-id="11511"></option>
+    <option value="Santander" data-id="14223"></option>
+    <option value="Santander (Todas)" data-id="SANTA"></option>
+    <option value="Santiago De Compostela" data-id="31400"></option>
+    <option value="Segovia (Todas)" data-id="SEGOV"></option>
+    <option value="Segovia Av" data-id="08004"></option>
+    <option value="Sevilla-San Bernardo" data-id="51100"></option>
+    <option value="Sevilla-Santa Justa" data-id="51003"></option>
+    <option value="Tafalla" data-id="80108"></option>
+    <option value="Tarragona" data-id="71500"></option>
+    <option value="Tarragona (Todas)" data-id="TARRA"></option>
+    <option value="Toledo" data-id="92102"></option>
+    <option value="Torrelavega" data-id="14213"></option>
+    <option value="Tudela De Navarra" data-id="81202"></option>
+    <option value="Valdepeñas" data-id="50102"></option>
+    <option value="Valencia (Todas)" data-id="VALEN"></option>
+    <option value="Valencia Joaquin Sorolla" data-id="03216"></option>
+    <option value="Valencia-Estacio Del Nord" data-id="65000"></option>
+    <option value="Valladolid" data-id="10600"></option>
+    <option value="Vigo (Todas)" data-id="VIGO-"></option>
+    <option value="Vigo Guixar" data-id="22308"></option>
+    <option value="Vigo Urzaiz" data-id="08223"></option>
+    <option value="Vilagarcia De Arousa" data-id="23008"></option>
+    <option value="Villanueva De Cordoba-Los Pedroches" data-id="37704"></option>
+    <option value="Villarrobledo" data-id="60500"></option>
+    <option value="Villena" data-id="60902"></option>
+    <option value="Villena Av" data-id="03309"></option>
+    <option value="Vinaros" data-id="65312"></option>
+    <option value="Vitoria/Gasteiz" data-id="11208"></option>
+    <option value="Xativa" data-id="64100"></option>
+    <option value="Zamora" data-id="30200"></option>
+    <option value="Zaragoza (Todas)" data-id="ZARAG"></option>
+    <option value="Zaragoza-Delicias" data-id="04040"></option>
+    <option value="Zumarraga" data-id="11400"></option>
+  </datalist>
+  <style type="text/css">
+    .spinner {
+      -webkit-animation: rotator 1.4s linear infinite;
+      animation: rotator 1.4s linear infinite;
+      display: none;
+      margin: 30px auto
+    }
+
+    @-webkit-keyframes rotator {
+      0% {
+        -webkit-transform: rotate(0);
+        transform: rotate(0)
+      }
+      100% {
+        -webkit-transform: rotate(270deg);
+        transform: rotate(270deg)
+      }
+    }
+
+    @keyframes rotator {
+      0% {
+        -webkit-transform: rotate(0);
+        transform: rotate(0)
+      }
+      100% {
+        -webkit-transform: rotate(270deg);
+        transform: rotate(270deg)
+      }
+    }
+
+    .path {
+      stroke-dasharray: 187;
+      stroke-dashoffset: 0;
+      -webkit-transform-origin: center;
+      transform-origin: center;
+      -webkit-animation: dash 1.4s ease-in-out infinite;
+      animation: dash 1.4s ease-in-out infinite;
+      stroke: #26a69a
+    }
+
+    @-webkit-keyframes dash {
+      0% {
+        stroke-dashoffset: 187
+      }
+      50% {
+        stroke-dashoffset: 46.75;
+        -webkit-transform: rotate(135deg);
+        transform: rotate(135deg)
+      }
+      100% {
+        stroke-dashoffset: 187;
+        -webkit-transform: rotate(450deg);
+        transform: rotate(450deg)
+      }
+    }
+
+    @keyframes dash {
+      0% {
+        stroke-dashoffset: 187
+      }
+      50% {
+        stroke-dashoffset: 46.75;
+        -webkit-transform: rotate(135deg);
+        transform: rotate(135deg)
+      }
+      100% {
+        stroke-dashoffset: 187;
+        -webkit-transform: rotate(450deg);
+        transform: rotate(450deg)
+      }
+    }
+  </style>
+  <!--Table styles-->
+  <style>
+    table.timetable {
+      width: 100%;
+      display: table;
+      border-collapse: collapse;
+      border-spacing: 0;
+      border: none;
+      font-family: "Helvetica Neue", Helvetica, Arial, sans-serif
+    }
+
+    .timetable td,
+    .timetable th {
+      padding: 15px 5px;
+      display: table-cell;
+      text-align: left;
+      vertical-align: middle;
+      -webkit-border-radius: 2px;
+      -moz-border-radius: 2px;
+      border-radius: 2px;
+      background-clip: padding-box
+    }
+
+    .timetable tr:nth-child(odd) {
+      background-color: #f2f2f2
+    }
+
+    .timetable thead {
+      border-bottom: 1px solid #d0d0d0
+    }
+
+    .timetable tbody {
+      font-weight: 300
+    }
+  </style>
+</body>
+
+</html>
