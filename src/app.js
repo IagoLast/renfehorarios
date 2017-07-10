@@ -13,7 +13,7 @@ export default class App {
 
   init() {
     let today = new Date();
-    this._dateInput.value = `${today.getDate()}/${today.getMonth()+1}/${today.getFullYear()}`;
+    this._dateInput.value = `${today.getDate()}/${today.getMonth() + 1}/${today.getFullYear()}`;
     this._searchButton.addEventListener('click', this.onSearch.bind(this));
   }
 

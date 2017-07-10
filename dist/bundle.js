@@ -190,19 +190,9 @@ Object.defineProperty(exports, "__esModule", {
   value: true
 });
 function getTravels(from, to, day, month, year) {
-  return new Promise(function (resolve, reject) {
-    var xhttp = new XMLHttpRequest();
-    var uri = "https://renfeparser.herokuapp.com/" + from + "/" + to + "/" + year + "-" + month + "-" + day;
-    xhttp.onreadystatechange = function () {
-      if (this.readyState == 4 && this.status == 200) {
-        return resolve(JSON.parse(xhttp.responseText));
-      }
-      if (this.readyState == 4 && this.status !== 200) {
-        return reject(this.status);
-      }
-    };
-    xhttp.open("GET", uri, true);
-    xhttp.send();
+  var uri = "https://renfeparser.herokuapp.com/" + from + "/" + to + "/" + year + "-" + month + "-" + day;
+  return fetch(uri).then(function (response) {
+    return response.json();
   });
 }
 

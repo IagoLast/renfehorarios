@@ -1,0 +1,14 @@
+{
+	"name": "Horarios Renfe",
+	"short_name": "Renfe",
+	"icons": [{
+		"src": "logo.svg",
+		"type": "image/svg",
+		"sizes": "72x72 96x96 128x128 256x256"
+	}],
+	"theme_color": "#e91e63",
+	"background_color": "#fff",
+	"start_url": "index.html",
+	"display": "fullscreen",
+	"orientation": "portrait"
+}
