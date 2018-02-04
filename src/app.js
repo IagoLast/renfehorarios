@@ -1,4 +1,6 @@
 import getTravels from './renfeClient.js';
+import autoComplete from './autocomplete.js';
+import stations from './stations.js';
 
 export default class App {
   constructor() {
@@ -12,6 +14,7 @@ export default class App {
   }
 
   init() {
+    this._populateSelects(stations);
     let today = new Date();
     this._dateInput.value = `${today.getDate()}/${today.getMonth() + 1}/${today.getFullYear()}`;
     this._searchButton.addEventListener('click', this.onSearch.bind(this));
@@ -19,8 +22,8 @@ export default class App {
 
   onSearch() {
     let [day, month, year] = this._dateInput.value.split('/');
-    let from = document.querySelector(`#stations option[value="${this._fromInput.value}"]`).dataset.id;
-    let to = document.querySelector(`#stations option[value="${this._toInput.value}"]`).dataset.id;
+    let from = stations[this._fromInput.value];
+    let to = stations[this._toInput.value];
     this.sendRequest(from, to, day, month, year);
   }
 
@@ -52,5 +55,35 @@ export default class App {
 
   hideSpinner() {
     this._spinner.style.display = 'none';
+  }
+
+  _populateSelects(stations) {
+    let stationsData = {};
+    let stationsArray = [];
+
+    for (let station in stations) {
+      stationsArray.push(station);
+      stationsData[station] = stations[station];
+    }
+
+
+    this._newAutocomplete('input[name="from"]', stationsArray);
+    this._newAutocomplete('input[name="to"]', stationsArray);
+  }
+
+  _newAutocomplete(selector, stationsArray) {
+    return new autoComplete({
+      selector,
+      minChars: 1,
+      source: (term, suggest) => {
+        let suggestions = [];
+        for (let i = 0; i < stationsArray.length; i++) {
+          if (stationsArray[i].toLowerCase().includes(term.toLowerCase())) {
+            suggestions.push(stationsArray[i]);
+          }
+        }
+        suggest(suggestions);
+      },
+    });
   }
 }
